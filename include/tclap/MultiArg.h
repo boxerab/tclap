@@ -165,7 +165,7 @@ public:
      * \param i - Pointer the the current argument in the list.
      * \param args - Mutable list of strings. Passed from main().
      */
-    virtual bool processArg(int *i, std::vector<std::string> &args);
+    virtual bool processArg(size_t *i, std::vector<std::string> &args);
 
     /**
      * Returns a vector of type T containing the values parsed from
@@ -202,11 +202,11 @@ public:
     virtual void reset();
 
 private:
-	/**
-	 * Prevent accidental copying
-	 */
-	MultiArg(const MultiArg<T>& rhs);
-	MultiArg& operator=(const MultiArg<T>& rhs);
+    /**
+     * Prevent accidental copying
+     */
+    MultiArg(const MultiArg &rhs);
+    MultiArg &operator=(const MultiArg &rhs);
 };
 
 template <class T>
@@ -265,7 +265,7 @@ MultiArg<T>::MultiArg(const std::string &flag, const std::string &name,
 }
 
 template <class T>
-bool MultiArg<T>::processArg(int *i, std::vector<std::string> &args) {
+bool MultiArg<T>::processArg(size_t *i, std::vector<std::string> &args) {
     if (_hasBlanks(args[*i])) return false;
 
     std::string flag = args[*i];

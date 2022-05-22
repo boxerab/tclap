@@ -24,14 +24,13 @@
 #ifndef TCLAP_STD_OUTPUT_H
 #define TCLAP_STD_OUTPUT_H
 
-#include <tclap/Arg.h>
-#include <tclap/ArgGroup.h>
 #include <tclap/CmdLineInterface.h>
 #include <tclap/CmdLineOutput.h>
+#include <tclap/Arg.h>
+#include <tclap/ArgGroup.h>
 
 #include <algorithm>
 #include <cctype>
-#include <cstddef>
 #include <iostream>
 #include <list>
 #include <string>
@@ -95,8 +94,8 @@ protected:
      * \param secondLineOffset - The number of spaces to indent the second
      * and all subsequent lines in addition to indentSpaces.
      */
-    void spacePrint(std::ostream &os, const std::string &s, int maxWidth,
-                    int indentSpaces, int secondLineOffset) const;
+    void spacePrint(std::ostream &os, const std::string &s, size_t maxWidth,
+    		size_t indentSpaces, size_t secondLineOffset) const;
 };
 
 inline void StdOutput::version(CmdLineInterface &_cmd) {
@@ -371,8 +370,8 @@ inline void StdOutput::_shortUsage(CmdLineInterface &_cmd,
     }
 
     // if the program name is too long, then adjust the second line offset
-    int secondLineOffset = static_cast<int>(_cmd.getProgramName().length()) + 2;
-    if (secondLineOffset > 75 / 2) secondLineOffset = static_cast<int>(75 / 2);
+    size_t secondLineOffset = _cmd.getProgramName().length() + 2;
+    if (secondLineOffset > 75 / 2) secondLineOffset = static_cast<size_t>(75 / 2);
 
     spacePrint(os, outp.str(), 75, 3, secondLineOffset);
 }
@@ -434,10 +433,13 @@ inline void StdOutput::_longUsage(CmdLineInterface &_cmd,
 }
 
 namespace {
-inline void fmtPrintLine(std::ostream &os, const std::string &s, int maxWidth,
-                         int indentSpaces, int secondLineOffset) {
+inline void fmtPrintLine(std::ostream &os, const std::string &s,
+                         size_t maxWidth, size_t indentSpaces,
+                         size_t secondLineOffset) {
     const std::string splitChars(" ,|");
-    size_t maxChars = std::max(maxWidth - indentSpaces, 0);
+    if (maxWidth < indentSpaces)
+    	return;
+    size_t maxChars = (size_t)(maxWidth - indentSpaces);
     std::string indentString(indentSpaces, ' ');
     size_t from = 0;
     size_t to = 0;
@@ -453,7 +455,8 @@ inline void fmtPrintLine(std::ostream &os, const std::string &s, int maxWidth,
         // (to) by finding the place where it is too late (tooFar) and
         // taking the previous one.
         size_t tooFar = to;
-        while (tooFar - from <= maxChars && tooFar != std::string::npos) {
+        while (tooFar - from <= maxChars &&
+               tooFar != std::string::npos) {
             to = tooFar;
             tooFar = s.find_first_of(splitChars, to + 1);
         }
@@ -472,10 +475,9 @@ inline void fmtPrintLine(std::ostream &os, const std::string &s, int maxWidth,
         os << indentString << s.substr(from, to - from) << '\n';
 
         // Avoid printing extra white space at start of a line
-        for (; s[to] == ' '; to++) {
-        }
+        for (; s[to] == ' '; to++) {}
         from = to;
-
+        
         if (secondLineOffset != 0) {
             // Adjust offset for following lines
             indentString.insert(indentString.end(), secondLineOffset, ' ');
@@ -484,17 +486,17 @@ inline void fmtPrintLine(std::ostream &os, const std::string &s, int maxWidth,
         }
     }
 }
-}  // namespace
+}
 
 inline void StdOutput::spacePrint(std::ostream &os, const std::string &s,
-                                  int maxWidth, int indentSpaces,
-                                  int secondLineOffset) const {
+                                  size_t maxWidth, size_t indentSpaces,
+								  size_t secondLineOffset) const {
     std::stringstream ss(s);
     std::string line;
     std::getline(ss, line);
     fmtPrintLine(os, line, maxWidth, indentSpaces, secondLineOffset);
     indentSpaces += secondLineOffset;
-
+    
     while (std::getline(ss, line)) {
         fmtPrintLine(os, line, maxWidth, indentSpaces, 0);
     }

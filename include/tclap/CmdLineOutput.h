@@ -99,9 +99,9 @@ inline void removeArgsInArgGroups(std::list<Arg *> &argList,
 }
 
 inline std::string removeSuffix(std::string s, const std::string &suffix) {
-	std::ptrdiff_t start = s.length() - suffix.length();
-	if (start >= 0 && s.substr(start) == suffix) {
-		return s.substr(0, start);
+	std::ptrdiff_t start = static_cast<std::ptrdiff_t>(s.length() - suffix.length());
+	if (start >= 0 && s.substr(static_cast<size_t>(start)) == suffix) {
+		return s.substr(0, static_cast<size_t>(start));
 	}
 
 	return s;

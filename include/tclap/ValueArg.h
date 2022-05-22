@@ -82,7 +82,10 @@ protected:
 public:
     /**
      * Labeled ValueArg constructor.
-     * 
+     * You could conceivably call this constructor with a blank flag,
+     * but that would make you a bad person.  It would also cause
+     * an exception to be thrown.   If you want an unlabeled argument,
+     * use the other constructor.
      * \param flag - The one character flag that identifies this
      * argument on the command line.
      * \param name - A one word name for the argument.  Can be
@@ -106,7 +109,10 @@ public:
 
     /**
      * Labeled ValueArg constructor.
-     *
+     * You could conceivably call this constructor with a blank flag,
+     * but that would make you a bad person.  It would also cause
+     * an exception to be thrown.   If you want an unlabeled argument,
+     * use the other constructor.
      * \param flag - The one character flag that identifies this
      * argument on the command line.
      * \param name - A one word name for the argument.  Can be
@@ -132,7 +138,10 @@ public:
 
     /**
      * Labeled ValueArg constructor.
-     *
+     * You could conceivably call this constructor with a blank flag,
+     * but that would make you a bad person.  It would also cause
+     * an exception to be thrown.   If you want an unlabeled argument,
+     * use the other constructor.
      * \param flag - The one character flag that identifies this
      * argument on the command line.
      * \param name - A one word name for the argument.  Can be
@@ -156,7 +165,10 @@ public:
 
     /**
      * Labeled ValueArg constructor.
-     *
+     * You could conceivably call this constructor with a blank flag,
+     * but that would make you a bad person.  It would also cause
+     * an exception to be thrown.   If you want an unlabeled argument,
+     * use the other constructor.
      * \param flag - The one character flag that identifies this
      * argument on the command line.
      * \param name - A one word name for the argument.  Can be
@@ -185,7 +197,7 @@ public:
      * \param args - Mutable list of strings. Passed
      * in from main().
      */
-    virtual bool processArg(int *i, std::vector<std::string> &args);
+    virtual bool processArg(size_t *i, std::vector<std::string> &args);
 
     /**
      * Returns the value of the argument.
@@ -213,11 +225,11 @@ public:
     virtual void reset();
 
 private:
-  /**
-   * Prevent accidental copying
-   */
-  ValueArg(const ValueArg<T>& rhs);
-  ValueArg& operator=(const ValueArg<T>& rhs);
+    /**
+     * Prevent accidental copying
+     */
+    ValueArg(const ValueArg &rhs);
+    ValueArg &operator=(const ValueArg &rhs);
 };
 
 /**
@@ -273,7 +285,7 @@ ValueArg<T>::ValueArg(const std::string &flag, const std::string &name,
  * Implementation of processArg().
  */
 template <class T>
-bool ValueArg<T>::processArg(int *i, std::vector<std::string> &args) {
+bool ValueArg<T>::processArg(size_t *i, std::vector<std::string> &args) {
     if (_hasBlanks(args[*i])) return false;
 
     std::string flag = args[*i];
